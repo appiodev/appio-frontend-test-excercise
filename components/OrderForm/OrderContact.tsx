@@ -19,7 +19,7 @@ interface Props {
 type Form = Omit<TicketOrder, "tickets">;
 
 const schema = z.object({
-  name: z.string().nonempty(),
+  name: z.string(),
   email: z.string().email(),
   phone: z.string().refine(validator.isMobilePhone),
 });
@@ -44,12 +44,12 @@ export const OrderContact: FC<Props> = ({ onSubmit }) => {
   });
 
   return (
-    <>
-      <Typography variant="h2">Vaše údaje</Typography>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Stack gap={4}>
+        <Typography variant="h2">Vaše údaje</Typography>
 
-      <Card>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
+        <Card>
+          <CardContent>
             <Stack gap={2}>
               <TextField
                 required
@@ -82,18 +82,18 @@ export const OrderContact: FC<Props> = ({ onSubmit }) => {
                 }
                 label="Souhlasím s úplně vším"
               />
-
-              <Button
-                variant="contained"
-                type="submit"
-                disabled={!consent || !!Object.keys(errors).length}
-              >
-                Odeslat
-              </Button>
             </Stack>
-          </form>
-        </CardContent>
-      </Card>
-    </>
+          </CardContent>
+        </Card>
+
+        <Button
+          variant="contained"
+          type="submit"
+          disabled={!consent || !!Object.keys(errors).length}
+        >
+          Odeslat
+        </Button>
+      </Stack>
+    </form>
   );
 };
