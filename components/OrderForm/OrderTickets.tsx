@@ -25,13 +25,13 @@ export const OrderTickets: FC<Props> = ({ variants, onSubmit }) => {
 
       {variants.map((v) => (
         <Card key={v.id}>
-          <CardContent>
+          <CardContent sx={{ pb: 1 }}>
             <Stack gap={1}>
               <Stack gap={2} direction="row" alignItems="center">
                 <Typography variant="h3" width="100%">
                   {v.title}
                 </Typography>
-                <Box flex="1 0 auto">{v.price} CZK</Box>
+                <Box flex="1 0 auto">{v.price.toLocaleString("cs")} CZK</Box>
 
                 <ButtonGroup
                   variant="outlined"
@@ -49,7 +49,11 @@ export const OrderTickets: FC<Props> = ({ variants, onSubmit }) => {
                   </Button>
                   <Button
                     component="div"
-                    sx={{ borderRadius: 0, marginLeft: "-1px" }}
+                    sx={{
+                      borderRadius: 0,
+                      marginLeft: "-1px",
+                      fontFamily: "monospace",
+                    }}
                     disableRipple
                     disableElevation
                   >
@@ -67,11 +71,48 @@ export const OrderTickets: FC<Props> = ({ variants, onSubmit }) => {
                   </Button>
                 </ButtonGroup>
               </Stack>
-              <Typography paragraph>{v.text}</Typography>
+              <Typography paragraph sx={{ marginBottom: 0 }}>
+                {v.text}
+              </Typography>
             </Stack>
           </CardContent>
+          {tickets[v.id] > 0 && (
+            <Stack sx={{ p: 2, borderTop: "1px dashed" }} direction="row">
+              <Box width="100%">Celková cena</Box>
+              <Box flex="1 0 auto">
+                {(v.price * tickets[v.id]).toLocaleString("cs")} CZK
+              </Box>
+            </Stack>
+          )}
         </Card>
       ))}
+
+      <Card>
+        <CardContent>
+          <Stack gap={1}>
+            <Stack gap={2} direction="row" alignItems="center">
+              <Typography
+                variant="h3"
+                fontSize="1.2rem"
+                fontWeight={500}
+                width="100%"
+              >
+                Celková cena
+              </Typography>
+              <Box flex="1 0 auto" fontWeight={500} fontSize="1.2rem">
+                {Object.entries(tickets)
+                  .reduce(
+                    (acc, [id, amount]) =>
+                      acc + variants.find((v) => v.id === +id)!.price * amount,
+                    0
+                  )
+                  .toLocaleString("cs")}{" "}
+                CZK
+              </Box>
+            </Stack>
+          </Stack>
+        </CardContent>
+      </Card>
 
       <Button
         variant="contained"
