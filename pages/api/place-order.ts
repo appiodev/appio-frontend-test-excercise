@@ -6,7 +6,10 @@ const schema = z.object({
   email: z.string().email(),
   phone: z.string(),
 
-  tickets: z.record(z.number(), z.number()),
+  tickets: z.record(
+    z.preprocess(parseInt as any, z.number().positive()),
+    z.number()
+  ),
 });
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -17,10 +20,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const body = schema.safeParse(req.body);
 
-  if (!body.success) {
-    res.status(400).json(body.error.errors);
-    return;
-  }
+  setTimeout(() => {
+    if (!body.success) {
+      res.status(400).json(body.error.errors);
+      return;
+    }
 
-  res.status(200).json({ success: true });
+    res.status(200).json({ success: true });
+  }, 400);
 }

@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { FC, useState } from "react";
@@ -11,18 +12,24 @@ import { FC, useState } from "react";
 interface Props {
   variants: TicketVariant[];
 
+  initialValue?: TicketOrder["tickets"];
+
   onSubmit: (tickets: TicketOrder["tickets"]) => unknown;
 }
 
-export const OrderTickets: FC<Props> = ({ variants, onSubmit }) => {
-  const [tickets, setTickets] = useState<TicketOrder["tickets"]>({});
+export const OrderTickets: FC<Props> = ({
+  variants,
+  initialValue,
+  onSubmit,
+}) => {
+  const [tickets, setTickets] = useState<TicketOrder["tickets"]>(
+    initialValue ?? {}
+  );
 
   const valid = Object.values(tickets).reduce((acc, x) => acc + x, 0);
 
   return (
     <>
-      <Typography variant="h2">Lístky</Typography>
-
       {variants.map((v) => (
         <Card key={v.id}>
           <CardContent sx={{ pb: 1 }}>
@@ -87,32 +94,25 @@ export const OrderTickets: FC<Props> = ({ variants, onSubmit }) => {
         </Card>
       ))}
 
-      <Card>
-        <CardContent>
-          <Stack gap={1}>
-            <Stack gap={2} direction="row" alignItems="center">
-              <Typography
-                variant="h3"
-                fontSize="1.2rem"
-                fontWeight={500}
-                width="100%"
-              >
-                Celková cena
-              </Typography>
-              <Box flex="1 0 auto" fontWeight={500} fontSize="1.2rem">
-                {Object.entries(tickets)
-                  .reduce(
-                    (acc, [id, amount]) =>
-                      acc + variants.find((v) => v.id === +id)!.price * amount,
-                    0
-                  )
-                  .toLocaleString("cs")}{" "}
-                CZK
-              </Box>
-            </Stack>
+      <Paper sx={{ p: 2 }}>
+        <Stack gap={1}>
+          <Stack gap={2} direction="row" alignItems="center">
+            <Typography fontWeight={600} width="100%">
+              Celková cena
+            </Typography>
+            <Box flex="1 0 auto" fontWeight={600}>
+              {Object.entries(tickets)
+                .reduce(
+                  (acc, [id, amount]) =>
+                    acc + variants.find((v) => v.id === +id)!.price * amount,
+                  0
+                )
+                .toLocaleString("cs")}{" "}
+              CZK
+            </Box>
           </Stack>
-        </CardContent>
-      </Card>
+        </Stack>
+      </Paper>
 
       <Button
         variant="contained"

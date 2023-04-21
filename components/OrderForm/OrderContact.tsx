@@ -1,18 +1,18 @@
 import { TicketOrder } from "@/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Card, CardContent, CircularProgress } from "@mui/material";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import validator from "validator";
-import { Card, CardContent } from "@mui/material";
+import { z } from "zod";
 
 interface Props {
+  loading?: boolean;
   onSubmit: (order: Form) => unknown;
 }
 
@@ -24,7 +24,7 @@ const schema = z.object({
   phone: z.string().refine(validator.isMobilePhone),
 });
 
-export const OrderContact: FC<Props> = ({ onSubmit }) => {
+export const OrderContact: FC<Props> = ({ onSubmit, loading }) => {
   const [consent, setConsent] = useState(false);
   const {
     register,
@@ -46,8 +46,6 @@ export const OrderContact: FC<Props> = ({ onSubmit }) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack gap={4}>
-        <Typography variant="h2">Vaše údaje</Typography>
-
         <Card>
           <CardContent>
             <Stack gap={2}>
@@ -90,6 +88,7 @@ export const OrderContact: FC<Props> = ({ onSubmit }) => {
           variant="contained"
           type="submit"
           disabled={!consent || !!Object.keys(errors).length}
+          startIcon={loading && <CircularProgress color="info" size={24} />}
         >
           Odeslat
         </Button>
